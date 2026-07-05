@@ -8,17 +8,14 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-icon">⚡</span>
-      <h1>PerfettoHub</h1>
-    </div>
-    <span class="tagline">Store, name, and explore your Perfetto traces</span>
-  </header>
-
   <main class="layout">
     <!-- Left panel: upload + history -->
     <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <h1>PerfettoHub</h1>
+      </div>
+
       <div id="dropzone" class="dropzone" tabindex="0">
         <div class="dropzone-inner">
           <div class="dropzone-icon">📥</div>
@@ -40,6 +37,9 @@
       </p>
     </aside>
 
+    <!-- Drag handle to resize the two columns -->
+    <div id="resizer" class="resizer" title="Drag to resize"></div>
+
     <!-- Right panel: embedded Perfetto viewer -->
     <section class="viewer">
       <div id="viewer-placeholder" class="viewer-placeholder">
@@ -51,6 +51,7 @@
       <div id="viewer-toolbar" class="viewer-toolbar" hidden>
         <span id="viewer-title" class="viewer-title"></span>
         <span id="viewer-loading" class="viewer-loading">Loading trace into Perfetto…</span>
+        <button id="viewer-fullwindow" class="btn btn-small" title="Full window (Esc to exit)">⛶ Full window</button>
         <button id="viewer-close" class="btn btn-small" title="Close viewer">✕ Close</button>
       </div>
       <iframe
@@ -61,6 +62,11 @@
       ></iframe>
     </section>
   </main>
+
+  <!-- Floating control shown only in full-window mode -->
+  <button id="exit-fullwindow" class="exit-fullwindow" title="Exit full window (Esc)" hidden>
+    ⤢ Exit full window
+  </button>
 
   <!-- Name prompt dialog shown on upload -->
   <dialog id="name-dialog">

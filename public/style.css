@@ -27,30 +27,57 @@ html, body {
 
 body { display: flex; flex-direction: column; }
 
-/* ------------------------------ Top bar ------------------------------ */
-
-.topbar {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 12px 20px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-}
+/* ------------------------------ Brand ------------------------------- */
 
 .brand { display: flex; align-items: center; gap: 8px; }
 .brand-icon { font-size: 20px; }
-.topbar h1 { margin: 0; font-size: 18px; letter-spacing: 0.3px; }
-.tagline { color: var(--muted); font-size: 12.5px; }
+.brand h1 { margin: 0; font-size: 18px; letter-spacing: 0.3px; }
 
 /* ------------------------------ Layout ------------------------------- */
 
 .layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: var(--sidebar-width, 340px) 6px 1fr;
   min-height: 0;
 }
+
+/* ----------------------------- Resizer ------------------------------ */
+
+.resizer {
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 0.15s;
+}
+.resizer:hover, .resizer.dragging { background: var(--accent); }
+
+/* While dragging, kill iframe pointer events so the drag isn't swallowed. */
+body.resizing { cursor: col-resize; user-select: none; }
+body.resizing iframe { pointer-events: none; }
+
+/* --------------------------- Full window ---------------------------- */
+
+body.fullwindow .sidebar,
+body.fullwindow .resizer,
+body.fullwindow .viewer-toolbar { display: none; }
+
+body.fullwindow .layout { grid-template-columns: 1fr; }
+
+.exit-fullwindow {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.exit-fullwindow:hover { border-color: var(--accent); opacity: 1; }
 
 .sidebar {
   display: flex;

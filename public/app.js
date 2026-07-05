@@ -15,6 +15,9 @@ const els = {
   viewerTitle: document.getElementById('viewer-title'),
   viewerLoading: document.getElementById('viewer-loading'),
   viewerClose: document.getElementById('viewer-close'),
+  viewerFullWindow: document.getElementById('viewer-fullwindow'),
+  exitFullWindow: document.getElementById('exit-fullwindow'),
+  resizer: document.getElementById('resizer'),
   nameDialog: document.getElementById('name-dialog'),
   nameForm: document.getElementById('name-form'),
   nameInput: document.getElementById('name-input'),
@@ -228,6 +231,7 @@ function openTrace(id) {
   activeTraceId = id;
   renderTraceList();
 
+  setTraceParam(id);
   els.viewerPlaceholder.hidden = true;
   els.viewerToolbar.hidden = false;
   els.frame.hidden = false;
@@ -287,8 +291,17 @@ async function loadTraceIntoFrame(trace) {
   });
 }
 
+function setTraceParam(id) {
+  const url = new URL(window.location);
+  if (id) url.searchParams.set('trace', id);
+  else url.searchParams.delete('trace');
+  history.replaceState(null, '', url);
+}
+
 function closeViewer() {
   activeTraceId = null;
+  setTraceParam(null);
+  setFullWindow(false);
   clearInterval(framePingInterval);
   els.frame.src = 'about:blank';
   els.frame.hidden = true;
@@ -300,5 +313,65 @@ function closeViewer() {
 els.viewerClose.addEventListener('click', closeViewer);
 
 // ---------------------------------------------------------------------------
+// Resizable columns
+// ---------------------------------------------------------------------------
 
-refreshTraces().catch((err) => showStatus(`Failed to load traces: ${err.message}`, true));
+const SIDEBAR_MIN = 220;
+const SIDEBAR_MAX_MARGIN = 320; // keep at least this many px for the viewer
+
+// Restore any previously saved width.
+const savedWidth = Number(localStorage.getItem('sidebarWidth'));
+if (savedWidth) {
+  document.documentElement.style.setProperty('--sidebar-width', `${savedWidth}px`);
+}
+
+els.resizer.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  els.resizer.setPointerCapture(e.pointerId);
+  els.resizer.classList.add('dragging');
+  document.body.classList.add('resizing');
+
+  const onMove = (ev) => {
+    const max = window.innerWidth - SIDEBAR_MAX_MARGIN;
+    const width = Math.min(Math.max(ev.clientX, SIDEBAR_MIN), Math.max(max, SIDEBAR_MIN));
+    document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
+  };
+  const onUp = () => {
+    els.resizer.classList.remove('dragging');
+    document.body.classList.remove('resizing');
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    const current = getComputedStyle(document.documentElement)
+      .getPropertyValue('--sidebar-width').trim();
+    if (current) localStorage.setItem('sidebarWidth', parseInt(current, 10));
+  };
+
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+});
+
+// ---------------------------------------------------------------------------
+// Full-window mode (hide all chrome, trace fills the window)
+// ---------------------------------------------------------------------------
+
+function setFullWindow(on) {
+  document.body.classList.toggle('fullwindow', on);
+  els.exitFullWindow.hidden = !on;
+}
+
+els.viewerFullWindow.addEventListener('click', () => setFullWindow(true));
+els.exitFullWindow.addEventListener('click', () => setFullWindow(false));
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.body.classList.contains('fullwindow')) {
+    setFullWindow(false);
+  }
+});
+
+// ---------------------------------------------------------------------------
+
+refreshTraces()
+  .then(() => {
+    const id = new URL(window.location).searchParams.get('trace');
+    if (id && traces.some((t) => t.id === id)) openTrace(id);
+  })
+  .catch((err) => showStatus(`Failed to load traces: ${err.message}`, true));
