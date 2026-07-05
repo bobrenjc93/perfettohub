@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PerfettoHub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">⚡</span>
+      <h1>PerfettoHub</h1>
+    </div>
+    <span class="tagline">Store, name, and explore your Perfetto traces</span>
+  </header>
+
+  <main class="layout">
+    <!-- Left panel: upload + history -->
+    <aside class="sidebar">
+      <div id="dropzone" class="dropzone" tabindex="0">
+        <div class="dropzone-inner">
+          <div class="dropzone-icon">📥</div>
+          <p><strong>Drag &amp; drop</strong> a Perfetto trace here</p>
+          <p class="muted">or click to browse (.perfetto-trace, .pftrace, .pb, .json, .gz, …)</p>
+        </div>
+        <input type="file" id="file-input" hidden multiple />
+      </div>
+
+      <div id="upload-status" class="upload-status" hidden></div>
+
+      <div class="history-header">
+        <h2>Trace history</h2>
+        <input type="search" id="search" placeholder="Filter traces…" />
+      </div>
+      <ul id="trace-list" class="trace-list"></ul>
+      <p id="empty-state" class="empty-state" hidden>
+        No traces yet. Drop one above to get started.
+      </p>
+    </aside>
+
+    <!-- Right panel: embedded Perfetto viewer -->
+    <section class="viewer">
+      <div id="viewer-placeholder" class="viewer-placeholder">
+        <div class="viewer-placeholder-inner">
+          <div class="dropzone-icon">🔬</div>
+          <p>Select a trace from the history to open it in the embedded Perfetto viewer.</p>
+        </div>
+      </div>
+      <div id="viewer-toolbar" class="viewer-toolbar" hidden>
+        <span id="viewer-title" class="viewer-title"></span>
+        <span id="viewer-loading" class="viewer-loading">Loading trace into Perfetto…</span>
+        <button id="viewer-close" class="btn btn-small" title="Close viewer">✕ Close</button>
+      </div>
+      <iframe
+        id="perfetto-frame"
+        title="Perfetto UI"
+        allow="fullscreen"
+        hidden
+      ></iframe>
+    </section>
+  </main>
+
+  <!-- Name prompt dialog shown on upload -->
+  <dialog id="name-dialog">
+    <form method="dialog" id="name-form">
+      <h3>Name this trace</h3>
+      <p id="name-dialog-file" class="muted"></p>
+      <input type="text" id="name-input" placeholder="e.g. app-startup-jank-repro" autocomplete="off" />
+      <div class="dialog-actions">
+        <button value="cancel" class="btn">Skip</button>
+        <button value="ok" class="btn btn-primary" id="name-ok">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

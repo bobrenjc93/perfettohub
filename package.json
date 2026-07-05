@@ -1,0 +1,13 @@
+{
+  "name": "perfettohub",
+  "version": "0.1.0",
+  "description": "A local hub for storing, naming, and viewing Perfetto traces with an embedded Perfetto UI viewer.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

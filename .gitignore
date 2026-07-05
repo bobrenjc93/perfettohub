@@ -1,0 +1,5 @@
+# Uploaded traces and metadata live locally, not in git
+data/
+
+node_modules/
+.DS_Store
