@@ -187,7 +187,10 @@ function renderTraceList() {
         body: JSON.stringify({ name: name.trim() }),
       });
       await refreshTraces();
-      if (trace.id === activeTraceId) els.viewerTitle.textContent = name.trim();
+      if (trace.id === activeTraceId) {
+        els.viewerTitle.textContent = name.trim();
+        document.title = `${name.trim()} · PerfettoHub`;
+      }
     });
     const downloadBtn = button('Download', 'btn btn-small', (e) => {
       e.stopPropagation();
@@ -232,6 +235,7 @@ function openTrace(id) {
   renderTraceList();
 
   setTraceParam(id);
+  document.title = `${trace.name} · PerfettoHub`;
   els.viewerPlaceholder.hidden = true;
   els.viewerToolbar.hidden = false;
   els.frame.hidden = false;
@@ -301,6 +305,7 @@ function setTraceParam(id) {
 function closeViewer() {
   activeTraceId = null;
   setTraceParam(null);
+  document.title = 'PerfettoHub';
   setFullWindow(false);
   clearInterval(framePingInterval);
   els.frame.src = 'about:blank';
