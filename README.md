@@ -23,7 +23,7 @@ Requires Node.js ≥ 18. No `npm install` needed.
 
 ```sh
 node server.js
-# → PerfettoHub running at http://localhost:3000
+# → PerfettoHub running at http://localhost:3003
 ```
 
 Set `PORT` to use a different port: `PORT=8080 node server.js`.
