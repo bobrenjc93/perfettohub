@@ -13,6 +13,9 @@
 
 * { box-sizing: border-box; }
 
+/* The UA's [hidden] rule loses to class selectors that set display; force it. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
